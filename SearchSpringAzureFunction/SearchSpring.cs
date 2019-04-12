@@ -33,17 +33,17 @@ namespace SearchSpringUpdate
             try
             {
                 int store = 1;
-                //azureSqlCon = new SqlConnection(azureConnectionStr);
-                //azureSqlCon.Open();
-                //List<Category> categories;
-                //List<Product> productList = getCV3Products("CV3_" + store, "Products", out categories, azureSqlCon);
+                azureSqlCon = new SqlConnection(azureConnectionStr);
+                azureSqlCon.Open();
+                List<Category> categories;
+                List<Product> productList = getCV3Products("CV3_" + store, out categories, azureSqlCon);
                 integrationSqlCon = new SqlConnection(integrationConnectionStr);
                 integrationSqlCon.Open();
-                //productList = insertCV3Products(productList, store, integrationSqlCon);
-                //insertCV3Attributes(productList, store, integrationSqlCon);
-                //insertCV3ImageSet(productList, store, integrationSqlCon);
-                //insertCV3Filter(productList, store, integrationSqlCon);
-                //insertCV3Categories(categories, store, integrationSqlCon);
+                productList = insertCV3Products(productList, store, integrationSqlCon);
+                insertCV3Attributes(productList, store, integrationSqlCon);
+                insertCV3ImageSet(productList, store, integrationSqlCon);
+                insertCV3Filters(productList, store, integrationSqlCon);
+                insertCV3Categories(categories, store, integrationSqlCon);
                 MemoryStream stream = createCSVFileStream(integrationSqlCon);
                 stream.Position = 0;
                 stream = zipMemoryStream(stream, "SearchSpring.csv");
@@ -51,12 +51,6 @@ namespace SearchSpringUpdate
                 HttpClientHandler handler = new HttpClientHandler();
                 handler.Credentials = new NetworkCredential("iokhmf", "Nm75bMaPDXxJANb29FQmBW96YmufZQon");
                 HttpClient client = new HttpClient(handler);
-                /*WebClient client = new WebClient();
-                client.Credentials = new NetworkCredential(siteID, secretkey);
-                Stream postStream = client.OpenWrite(serviceAddress, "POST");
-                stream.CopyTo(postStream);
-                postStream.Flush();
-                postStream.Close();*/
                 StreamContent streamContent = new StreamContent(stream);
                 MultipartFormDataContent formContent = new MultipartFormDataContent();
                 formContent.Add(streamContent, "feedFile");
